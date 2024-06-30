@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id  Int @id @default(autoincrement()) 
+  nombre String
+  password String
+  username String @unique
+  cedula String  @unique
+  sector String
+  ganador_anterior Boolean
+  rol RolUser
+  participantes Participante[]
+  ganadores Ganador[]
+}
+
+enum RolUser {
+  USER
+  ADMIN
+}
+
+model Evento {
+  id Int @id @default(autoincrement())
+  nombre_evento String
+  imagen String?
+  fecha_evento String
+  descripcion String?
+  entradas Int
+  participantes Participante[]
+  ganadores Ganador[]
+  fecha_eliminado DateTime?
+}
+
+model Participante {
+  id Int @id @default(autoincrement())
+  usuarioId Int
+  eventoId Int
+  fecha_participante DateTime @default(now())
+  fecha_cambio_participante DateTime @updatedAt
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  evento    Evento  @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  
+  @@unique([usuarioId, eventoId])
+}
+
+model Ganador {
+  id        Int      @id @default(autoincrement())
+  usuarioId Int
+  eventoId Int
+  fecha_ganador DateTime @default(now())
+  fecha_cambio_ganador DateTime @updatedAt
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  evento    Evento  @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, eventoId])
+}
