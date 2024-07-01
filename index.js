@@ -1,19 +1,34 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import routerAuth from './src/auth/routes/auth.routes.js'
+import cors from 'cors'
+import eventoRouter from './src/eventos/routes/evento.routes.js'
+
 
 dotenv.config()
 
 const app = express()
 
 const PORT = process.env.PORT
+
+const opcionesCors = {
+    origin: process.env.FRONTEND_URL_DEV,
+    credentials: true
+}
+
+
+app.use(cors(opcionesCors))
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+app.use("/upload", express.static("src/middlewares/upload"))
+
 
 app.use("/", routerAuth)
+app.use("/", eventoRouter)
 
 
 
-export default app.get('/', (req,res) => {
+app.get('/', (req,res) => {
     res.json("Index")
 })
 
