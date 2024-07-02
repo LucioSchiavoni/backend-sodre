@@ -35,7 +35,7 @@ model Evento {
   id Int @id @default(autoincrement())
   nombre_evento String
   imagen String?
-  fecha_evento String
+  fechas_evento   FechaEvento[] @relation("EventoFechas")
   descripcion String?
   entradas Int
   participantes Participante[]
@@ -43,16 +43,31 @@ model Evento {
   fecha_eliminado DateTime?
 }
 
+model FechaEvento {
+  id         Int     @id @default(autoincrement())
+  fecha      String
+  eventoId   Int
+  evento     Evento  @relation("EventoFechas", fields: [eventoId], references: [id])
+}
+
 model Participante {
   id Int @id @default(autoincrement())
   usuarioId Int
   eventoId Int
+  fecha_seleccionada FechaSeleccionada[]
   fecha_participante DateTime @default(now())
   fecha_cambio_participante DateTime @updatedAt
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
   evento    Evento  @relation(fields: [eventoId], references: [id], onDelete: Cascade)
   
   @@unique([usuarioId, eventoId])
+}
+
+model FechaSeleccionada {
+  id Int @id @default(autoincrement())
+  participanteId Int
+  fecha String
+  participante Participante @relation(fields: [participanteId], references: [id], onDelete: Cascade)
 }
 
 model Ganador {
