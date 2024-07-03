@@ -1,22 +1,37 @@
 import prisma from "../../config/db.js";
 
-export const crearParticipantes = async(req, res) => {
+export const crearParticipanteService = async(req, res) => {
 
-    const {userId, eventoId, fecha} = req.body;
+    const {eventoId, usuarioId, fecha} = req.body;
 
     try {
-        await prisma.participante.create({
-            data:{
-                eventoId: eventoId,
-                usuarioId: userId,
-                fecha_participante:{
-                  create:{
-                    fecha: fecha
-
-                  }
-                }
-            }
-        })
+      
+      const existUser = await prisma.participante.findFirst({
+        where:{
+          usuarioId: usuarioId,
+          eventoId: eventoId
+        }
+      })
+      if(existUser){
+        return {error: "Ya estas participanto en este evento"}
+      }
+      await prisma.participante.create({
+        data:{
+          eventoId: eventoId,
+          usuarioId: usuarioId,
+          fecha_seleccionada:{
+            create: fecha.map(fecha => ({
+              fecha: fecha
+            }))
+          }
+        },
+        include:{
+          fecha_seleccionada: true,
+          usuario: true
+        }
+      })
+        return {succes: "Participando en el sorteo"}
+      
     } catch (error) {
        console.log(error) 
     }
