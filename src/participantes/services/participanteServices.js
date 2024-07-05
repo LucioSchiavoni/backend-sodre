@@ -2,7 +2,7 @@ import prisma from "../../config/db.js";
 
 export const crearParticipanteService = async(req, res) => {
 
-    const {eventoId, usuarioId, fecha} = req.body;
+    const {eventoId, usuarioId, fecha_participante, cantidad_entradas} = req.body;
 
     try {
       
@@ -19,8 +19,9 @@ export const crearParticipanteService = async(req, res) => {
         data:{
           eventoId: eventoId,
           usuarioId: usuarioId,
+          cantidad_entradas:cantidad_entradas,
           fecha_seleccionada:{
-            create: fecha.map(fecha => ({
+            create: fecha_participante.map(fecha => ({
               fecha: fecha
             }))
           }
@@ -30,9 +31,27 @@ export const crearParticipanteService = async(req, res) => {
           usuario: true
         }
       })
-        return {succes: "Participando en el sorteo"}
+        return {success: "Participando en el sorteo"}
       
     } catch (error) {
        console.log(error) 
     }
+}
+
+export const participanteByIdEventoService = async(req,res) => {
+
+  try {
+    const {eventoId} = req.params;
+    return await prisma.participante.findMany({
+      where:{
+        eventoId: parseInt(eventoId)
+      },
+      include:{
+        fecha_seleccionada: true,
+        usuario: true
+      }
+    })
+  } catch (error) {
+    console.log(error)
+  }
 }

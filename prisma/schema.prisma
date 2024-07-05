@@ -54,6 +54,7 @@ model Participante {
   id Int @id @default(autoincrement())
   usuarioId Int
   eventoId Int
+  cantidad_entradas Int
   fecha_seleccionada FechaSeleccionada[]
   fecha_participante DateTime @default(now())
   fecha_cambio_participante DateTime @updatedAt
@@ -76,7 +77,7 @@ model Ganador {
   eventoId Int
   fecha_ganador DateTime @default(now())
   fecha_cambio_ganador DateTime @updatedAt
-
+  
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
   evento    Evento  @relation(fields: [eventoId], references: [id], onDelete: Cascade)
 
