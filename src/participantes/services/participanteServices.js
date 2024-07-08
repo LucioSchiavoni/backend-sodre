@@ -13,7 +13,7 @@ export const crearParticipanteService = async(req, res) => {
         }
       })
       if(existUser){
-        return {error: "Ya estas participanto en este evento"}
+        return {error: "Ya estas participando para este sorteo"}
       }
       await prisma.participante.create({
         data:{
@@ -28,10 +28,9 @@ export const crearParticipanteService = async(req, res) => {
         },
         include:{
           fecha_seleccionada: true,
-          usuario: true
         }
       })
-        return {success: "Participando en el sorteo"}
+        return {success: "Mucha suerte!"}
       
     } catch (error) {
        console.log(error) 

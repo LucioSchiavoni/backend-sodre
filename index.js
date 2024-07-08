@@ -4,6 +4,7 @@ import routerAuth from './src/auth/routes/auth.routes.js'
 import cors from 'cors'
 import eventoRouter from './src/eventos/routes/evento.routes.js'
 import participanteRouter from './src/participantes/routes/participante.routes.js'
+import ganadoresRouter from './src/ganadores/routes/ganadores.routes.js'
 
 
 dotenv.config()
@@ -27,7 +28,7 @@ app.use("/upload", express.static("src/middlewares/upload"))
 app.use("/", routerAuth)
 app.use("/", eventoRouter)
 app.use("/", participanteRouter)
-
+app.use("/", ganadoresRouter)
 
 
 app.get('/', (req,res) => {
