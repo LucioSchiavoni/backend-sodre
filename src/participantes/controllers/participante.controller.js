@@ -4,7 +4,6 @@ import { crearParticipanteService, participanteByIdEventoService } from "../serv
 
 export const crearParticipanteController = async(req,res) => {
     try {
-        console.log("body: ",req.body)
         const result = await crearParticipanteService(req,res)
         return res.json(result)
     } catch (error) {

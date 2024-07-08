@@ -36,13 +36,38 @@ export const ganadoresService = async (req, res) => {
                 }
             });
 
-        return ganadores;
+            const ganadoresData = ganadores.map(ganador => ({
+                usuarioId: ganador.usuario.id,
+                eventoId: ganador.eventoId,
+            })
+            );
+
+            return await prisma.ganador.createMany({
+                data: ganadoresData
+            })
+
+
             
         }   
-
-        
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const getGanadoresByIdEventoService = async(req,res) => {
+    try {
+        const {eventoId} = req.params;
+        const result = await prisma.ganador.findMany({
+            where:{
+                eventoId: parseInt(eventoId)
+            },
+            include:{
+                usuario:true
+            }
+        })
+        return result;
+    } catch (error) {
+        console.log(error)
+    }
+}
