@@ -18,6 +18,7 @@ model Usuario {
   nombre String
   password String
   username String @unique
+  email String
   cedula String  @unique
   sector String
   ganador_anterior Boolean
@@ -59,7 +60,7 @@ model Participante {
   fecha_participante DateTime @default(now())
   fecha_cambio_participante DateTime @updatedAt
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
-  evento    Evento  @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  evento    Evento  @relation(fields: [eventoId], references: [id])
   
   @@unique([usuarioId, eventoId])
 }
@@ -77,9 +78,8 @@ model Ganador {
   eventoId Int
   fecha_ganador DateTime @default(now())
   fecha_cambio_ganador DateTime @updatedAt
-  
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
-  evento    Evento  @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  evento    Evento  @relation(fields: [eventoId], references: [id])
 
   @@unique([usuarioId, eventoId])
 }

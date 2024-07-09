@@ -4,13 +4,21 @@ import jwt from 'jsonwebtoken'
 
 export const registerService = async (req,res) => {
 
-    const {username, password, rol, nombre, sector, cedula } = req.body;
+    const {username, password, rol, nombre, sector, cedula, email } = req.body;
     try {
         const exist = await prisma.usuario.findFirst({
             where: {
                 username: username
             }
         })
+        const existCedula = await prisma.usuario.findFirst({
+            where:{
+                cedula: cedula
+            }
+        })
+        if(existCedula){
+            return res.json({error: 'Esta cedula ya esta registrada'})
+        }
         if(exist){
             return res.json({ error: 'El usuario ya existe' });
         }
@@ -21,6 +29,7 @@ export const registerService = async (req,res) => {
                 cedula:cedula, 
                 ganador_anterior:false,
                 nombre:nombre,
+                email: email,
                 password: hashPassword,
                 rol: rol,
                 sector: sector,
@@ -54,6 +63,7 @@ export const loginService = async (req, res) => {
     username: existUser.username,
     password: existUser.password,
     cedula: existUser.cedula,
+    email: existUser.email,
     ganador_anterior: existUser.ganador_anterior,
     sector: existUser.sector,
     rol: existUser.rol,
@@ -92,6 +102,7 @@ export const authService = async (req, res) => {
         id: userToken.id,
         username: userToken.username,
         nombre: userToken.nombre,
+        email: userToken.email,
         rol: userToken.rol,
         sector: userToken.sector,
         cedula: userToken.cedula,

@@ -39,6 +39,7 @@ export const ganadoresService = async (req, res) => {
             const ganadoresData = ganadores.map(ganador => ({
                 usuarioId: ganador.usuario.id,
                 eventoId: ganador.eventoId,
+                fecha_seleccionada: ganador.fecha_seleccionada
             })
             );
 
@@ -63,7 +64,8 @@ export const getGanadoresByIdEventoService = async(req,res) => {
                 eventoId: parseInt(eventoId)
             },
             include:{
-                usuario:true
+                usuario:true,
+               
             }
         })
         return result;
