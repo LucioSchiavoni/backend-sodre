@@ -4,7 +4,72 @@ export const ganadoresService = async (req, res) => {
     try {
         const { id, numGanadores } = req.body;
 
-        const participantesList = await prisma.participante.findMany({
+        const participantesList = await findParticipante(id)
+        console.log("a ver flaco: ",participantesList)
+        if (participantesList) {
+            const shuffled = participantesList.sort(() => 0.5 - Math.random());
+            const ganadores = shuffled.slice(0, numGanadores);
+            const ganadoresIds = ganadores.map(ganador => ganador.usuario.id);
+
+           await updateGanadores(ganadoresIds)
+
+            const ganadoresData = ganadores.map(ganador => ({
+                usuarioId: ganador.usuario.id,
+                eventoId: ganador.eventoId,
+                
+            })
+            );
+
+               await prisma.ganador.createMany({
+                data: ganadoresData
+            }) 
+            const participanteId = ganadores.map(id => id.id)
+
+           return await getFechasGanadores(participanteId)
+        
+            
+        }   
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const getFechasGanadores = async(id) => {
+    try {
+        return await prisma.fechaSeleccionada.findMany({
+            where:{
+                participanteId:{
+                    in: id
+                }
+            }
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const updateGanadores = async(ganadoresIds) => {
+    try {
+        return await prisma.usuario.updateMany({
+            where: {
+                id: {
+                    in: ganadoresIds
+                }
+            },
+            data: {
+                ganador_anterior: true
+            }
+        });
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+export const findParticipante = async(id)=> {
+    try {
+      return await prisma.participante.findMany({
             where: {
                 eventoId: id,
                 usuario: {
@@ -19,42 +84,10 @@ export const ganadoresService = async (req, res) => {
                 fecha_seleccionada: true
             }
         });
-
-        if (participantesList) {
-            const shuffled = participantesList.sort(() => 0.5 - Math.random());
-            const ganadores = shuffled.slice(0, numGanadores);
-            const ganadoresIds = ganadores.map(ganador => ganador.usuario.id);
-
-            const updateUsuarios = await prisma.usuario.updateMany({
-                where: {
-                    id: {
-                        in: ganadoresIds
-                    }
-                },
-                data: {
-                    ganador_anterior: true
-                }
-            });
-
-            const ganadoresData = ganadores.map(ganador => ({
-                usuarioId: ganador.usuario.id,
-                eventoId: ganador.eventoId,
-                fecha_seleccionada: ganador.fecha_seleccionada
-            })
-            );
-
-            return await prisma.ganador.createMany({
-                data: ganadoresData
-            })
-
-
-            
-        }   
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
+        console.log(error)
     }
-};
+}
 
 export const getGanadoresByIdEventoService = async(req,res) => {
     try {
