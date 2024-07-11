@@ -25,8 +25,8 @@ export const ganadoresService = async (req, res) => {
             }) 
             const participanteId = ganadores.map(id => id.id)
 
-           return await getFechasGanadores(participanteId)
-        
+            await getFechasGanadores(participanteId)
+            return {success: "Sorteo generado"}
             
         }   
     } catch (error) {
@@ -98,7 +98,6 @@ export const getGanadoresByIdEventoService = async(req,res) => {
             },
             include:{
                 usuario:true,
-               
             }
         })
         return result;
