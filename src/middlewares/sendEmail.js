@@ -15,17 +15,18 @@ dotenv.config();
 
  const sendEmailService = async(req,res) => {
 
-    const {nombre, entradas} = req.body;
+    const {nombre,email} = req.body;
 
- 
+
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: "gonzalo.bonino@mec.gub.uy",
+        to: `${email}`,
         subject: `Ganador del sorteo`,
         html: `
         <div>
         <h1>Buenas tardes</h2>
-        <p>Por este medio comunicamos que las personas que fueron seleccionadas para asistir a la funcion del sodre  </p>
+        <p>Por este medio comunicamos que las personas que fueron seleccionadas para asistir a la función del sodre  </p>
+        <p>${nombre} </p>
         <p>En caso de no poder asistir, por favor responder a este correo avisándolo.</p>
         </div>`
     }  
