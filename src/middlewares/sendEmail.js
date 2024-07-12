@@ -24,15 +24,15 @@ dotenv.config();
         subject: `Ganador del sorteo`,
         html: `
         <div>
-        <h1>Buenas tardes</h2>
-        <p>Por este medio comunicamos que las personas que fueron seleccionadas para asistir a la función del sodre  </p>
-        <p>${nombre} </p>
+        <h1>Buenas tardes ${nombre}</h2>
+        <p>Por este medio te comunicamos que fuiste seleccionado para asistir a la funcion del sodre</p>
         <p>En caso de no poder asistir, por favor responder a este correo avisándolo.</p>
-        </div>`
+        </div>
+        `
     }  
     try {
         const info = await transporter.sendMail(mailOptions);
-        return res.json({message: 'Se envio un correo con los nombres de los ganadores', info})
+        return res.json({message: 'Se envio un correo al usuario'})
     } catch (error) {
         console.log(error)
     }

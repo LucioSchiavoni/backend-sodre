@@ -5,7 +5,7 @@ export const ganadoresService = async (req, res) => {
         const { id, numGanadores } = req.body;
 
         const participantesList = await findParticipante(id)
-        console.log("a ver flaco: ",participantesList)
+
         if (participantesList) {
             const shuffled = participantesList.sort(() => 0.5 - Math.random());
             const ganadores = shuffled.slice(0, numGanadores);
@@ -69,14 +69,11 @@ export const updateGanadores = async(ganadoresIds) => {
 
 export const findParticipante = async(id)=> {
     try {
-      return await prisma.participante.findMany({
+      let participantes = await prisma.participante.findMany({
             where: {
                 eventoId: id,
                 usuario: {
-                    OR: [
-                        { ganador_anterior: false }, // participantes que no ganaron el ultimo sorteo
-                        { NOT: { ganador_anterior: true } } // de lo contrario si todos ganaron el utlimo sorteo
-                    ]
+                  ganador_anterior: false
                 }
             },
             include: {
@@ -84,6 +81,22 @@ export const findParticipante = async(id)=> {
                 fecha_seleccionada: true
             }
         });
+
+        if(participantes.length === 0){
+            participantes = await prisma.participante.findMany({
+                where:{
+                    eventoId: id,
+                    usuario:{
+                        ganador_anterior: true
+                    }
+                },
+                include:{
+                    usuario:true,
+                    fecha_seleccionada:true
+                }
+            })
+        }
+        return participantes
     } catch (error) {
         console.log(error)
     }
@@ -101,6 +114,48 @@ export const getGanadoresByIdEventoService = async(req,res) => {
             }
         })
         return result;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+export const deleteGanadorServices = async (req,res) => {
+
+    const {id} = req.params;
+
+    try {
+
+        const usuarioGanador = await prisma.usuario.findFirst({
+            where:{
+                ganadores:{
+                    some:{
+                        id: parseInt(id)
+                    }
+                }
+            }
+        })
+
+        if(!usuarioGanador){
+            return res.status(404).json({message: "Usuario no encontrado"})
+        }
+        
+        const updateUser = await prisma.usuario.update({
+            where:{
+                id: usuarioGanador.id
+            },
+            data:{
+                ganador_anterior: false
+            }
+        })
+
+        const result = await prisma.ganador.delete({
+            where:{
+                id: parseInt(id)
+            }
+        })
+ 
+        return {message: "Ganador eliminado"}
     } catch (error) {
         console.log(error)
     }

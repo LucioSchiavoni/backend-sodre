@@ -60,3 +60,23 @@ export const mostrarEventoService = async(req,res) => {
         console.log(error)
     }
 }
+
+
+export const deleteEventoService = async(req,res) => {
+    const {id} = req.params;
+    try {
+         await prisma.evento.delete({
+            where:{
+                id: parseInt(id)
+            },
+            include:{
+                fechas_evento:true,
+                ganadores:true,
+                participantes:true
+            }       
+        })
+        return {success: "Evento eliminado"}
+    } catch (error) {
+        console.log(error)
+    }
+}
