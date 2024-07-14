@@ -48,7 +48,7 @@ model FechaEvento {
   id         Int     @id @default(autoincrement())
   fecha      String
   eventoId   Int
-  evento     Evento  @relation("EventoFechas", fields: [eventoId], references: [id])
+  evento     Evento  @relation("EventoFechas", fields: [eventoId], references: [id], onDelete: Cascade)
 }
 
 model Participante {
@@ -60,7 +60,7 @@ model Participante {
   fecha_participante DateTime @default(now())
   fecha_cambio_participante DateTime @updatedAt
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
-  evento    Evento  @relation(fields: [eventoId], references: [id])
+  evento    Evento  @relation(fields: [eventoId], references: [id], onDelete: Cascade)
   
   @@unique([usuarioId, eventoId])
 }
@@ -79,7 +79,7 @@ model Ganador {
   fecha_ganador DateTime @default(now())
   fecha_cambio_ganador DateTime @updatedAt
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
-  evento    Evento  @relation(fields: [eventoId], references: [id])
+  evento    Evento  @relation(fields: [eventoId], references: [id], onDelete: Cascade)
 
   @@unique([usuarioId, eventoId])
 }
