@@ -2,9 +2,9 @@ import prisma from "../../config/db.js";
 
 export const ganadoresService = async (req, res) => {
     try {
-        const { id, numGanadores } = req.body;
+        const { id, numGanadores, fechaSeleccionada } = req.body;
 
-        const participantesList = await findParticipante(id)
+        const participantesList = await findParticipante(id, fechaSeleccionada)
 
         if (participantesList) {
             const shuffled = participantesList.sort(() => 0.5 - Math.random());
@@ -23,27 +23,27 @@ export const ganadoresService = async (req, res) => {
                await prisma.ganador.createMany({
                 data: ganadoresData
             }) 
-            const participanteId = ganadores.map(id => id.id)
 
-            await getFechasGanadores(participanteId)
             return {success: "Sorteo generado"}
-            
-        }   
+        }else{
+            return {error: "No se encontro participantes para esas fechas"}
+        } 
+          
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };
 
-export const getFechasGanadores = async(id) => {
+export const getFechasGanadores = async(req,res) => {
     try {
-        return await prisma.fechaSeleccionada.findMany({
+        const {id} = req.params;
+        const fechas = await prisma.fechaSeleccionada.findMany({
             where:{
-                participanteId:{
-                    in: id
-                }
+                participanteId: parseInt(id)
             }
         })
+        return res.json(fechas)
     } catch (error) {
         console.log(error)
     }
@@ -67,11 +67,12 @@ export const updateGanadores = async(ganadoresIds) => {
 }
 
 
-export const findParticipante = async(id)=> {
+export const findParticipante = async(id, fecha_seleccionada)=> {
     try {
       let participantes = await prisma.participante.findMany({
             where: {
                 eventoId: id,
+                fecha_seleccionada:fecha_seleccionada,
                 usuario: {
                   ganador_anterior: false
                 }
@@ -118,6 +119,7 @@ export const getGanadoresByIdEventoService = async(req,res) => {
         console.log(error)
     }
 }
+
 
 
 export const deleteGanadorServices = async (req,res) => {
