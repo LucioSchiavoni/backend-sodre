@@ -37,7 +37,7 @@ model Evento {
   nombre_evento String
   imagen String?
   fechas_evento   FechaEvento[] @relation("EventoFechas")
-  descripcion String?
+  descripcion String? @db.Text
   entradas Int
   participantes Participante[]
   ganadores Ganador[]
@@ -55,7 +55,7 @@ model Participante {
   id Int @id @default(autoincrement())
   usuarioId Int
   eventoId Int
-  cantidad_entradas Int
+  cantidad_entradas Int?
   fecha_seleccionada FechaSeleccionada[]
   fecha_participante DateTime @default(now())
   fecha_cambio_participante DateTime @updatedAt
