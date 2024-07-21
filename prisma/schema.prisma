@@ -46,7 +46,7 @@ model Evento {
 
 model FechaEvento {
   id         Int     @id @default(autoincrement())
-  fecha      String
+  fecha      DateTime
   eventoId   Int
   evento     Evento  @relation("EventoFechas", fields: [eventoId], references: [id], onDelete: Cascade)
 }

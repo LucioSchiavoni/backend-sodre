@@ -20,11 +20,12 @@ export const crearParticipanteService = async(req, res) => {
           eventoId: eventoId,
           usuarioId: usuarioId,
           cantidad_entradas:cantidad_entradas,
-          fecha_seleccionada: fecha_participante === null ? '' : {
+          fecha_seleccionada: fecha_participante && fecha_participante.length > 0 ? {
             create: fecha_participante.map(fecha => ({
               fecha: fecha
             }))
           }
+          : undefined
         }
       })
         return {success: "Mucha suerte!"}
