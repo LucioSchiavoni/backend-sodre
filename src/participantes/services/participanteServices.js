@@ -52,3 +52,12 @@ export const participanteByIdEventoService = async(req,res) => {
     console.log(error)
   }
 }
+
+
+export const deleteParticipanteServie = async(req,res) => {
+  try {
+    
+  } catch (error) {
+    
+  }
+}

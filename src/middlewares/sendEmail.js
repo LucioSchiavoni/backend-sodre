@@ -25,7 +25,7 @@ dotenv.config();
         html: `
         <div>
         <h1>Buenas tardes ${nombre}</h2>
-        <p>Por este medio te comunicamos que fuiste seleccionado para asistir a la funcion del sodre</p>
+        <p>Por este medio te comunicamos que fuiste seleccionado para asistir a la función del sodre</p>
         <p>En caso de no poder asistir, por favor responder a este correo.</p>
         </div>
         `

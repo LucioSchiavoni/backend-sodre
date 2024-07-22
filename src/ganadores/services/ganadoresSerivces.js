@@ -2,29 +2,46 @@ import prisma from "../../config/db.js";
 
 export const ganadoresService = async (req, res) => {
     try {
-        const { id, numGanadores, fechaSeleccionada } = req.body;
-
-        const participantesList = await findParticipante(id, fechaSeleccionada)
+        
+        const { eventoId, numGanadores } = req.body;
+      
+        const participantesList = await findParticipante(eventoId)
 
         if (participantesList) {
             const shuffled = participantesList.sort(() => 0.5 - Math.random());
             const ganadores = shuffled.slice(0, numGanadores);
             const ganadoresIds = ganadores.map(ganador => ganador.usuario.id);
 
+
+
            await updateGanadores(ganadoresIds)
+            
+           if(ganadores.length > 1){
 
             const ganadoresData = ganadores.map(ganador => ({
                 usuarioId: ganador.usuario.id,
-                eventoId: ganador.eventoId,
-                
+                eventoId: eventoId,
             })
+         
             );
-
                await prisma.ganador.createMany({
                 data: ganadoresData
             }) 
 
             return {success: "Sorteo generado"}
+        }else{
+
+            const ganadorUser = ganadores[0]
+            await prisma.ganador.create({
+                data:{
+                     usuarioId: ganadorUser.usuario.id,
+                     eventoId: eventoId   
+                }
+            })
+            return {success: "Sorteo generado"}
+
+        }
+
         }else{
             return {error: "No se encontro participantes para esas fechas"}
         } 
@@ -34,6 +51,7 @@ export const ganadoresService = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
 
 export const getFechasGanadores = async(req,res) => {
     try {
@@ -67,12 +85,11 @@ export const updateGanadores = async(ganadoresIds) => {
 }
 
 
-export const findParticipante = async(id, fecha_seleccionada)=> {
+export const findParticipante = async(id)=> {
     try {
       let participantes = await prisma.participante.findMany({
             where: {
                 eventoId: id,
-                fecha_seleccionada:fecha_seleccionada,
                 usuario: {
                   ganador_anterior: false
                 }
