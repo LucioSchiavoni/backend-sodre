@@ -13,4 +13,4 @@ services:
       - mysql_sodre_data:/var/lib/mysql
 
 volumes:
-  mysql_data:
+  mysql_sodre_data:
