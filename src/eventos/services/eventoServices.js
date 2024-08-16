@@ -6,7 +6,7 @@ dotenv.config()
 export const crearEventoService = async(req,res) => {
     
     
-    const {entradas,fechas_evento, nombre_evento, descripcion } = req.body;
+    const {entradas,fechas_evento, nombre_evento, descripcion, lugar, sala } = req.body;
     const file = req.file;
     const uploadFile = file ? `${process.env.URL_UPLOAD}/upload/${file.filename}` : '';
 
@@ -18,6 +18,8 @@ export const crearEventoService = async(req,res) => {
                 entradas: parseInt(entradas),
                 nombre_evento: nombre_evento,
                 descripcion: descripcion,
+                lugar: lugar,
+                sala: sala,
                 imagen: uploadFile,
                 fechas_evento:{
                     create: fechaList.map((fecha) => ({

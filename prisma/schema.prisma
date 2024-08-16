@@ -38,6 +38,8 @@ model Evento {
   imagen String?
   fechas_evento   FechaEvento[] @relation("EventoFechas")
   descripcion String? @db.Text
+  lugar String
+  sala String
   entradas Int
   participantes Participante[]
   ganadores Ganador[]
